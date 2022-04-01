@@ -1,0 +1,10 @@
+{% extends 'season/base.html' %}
+
+{% block content %}
+<h1>{{title}}</h1>
+{% for driver in drivers %}
+<h2>{{driver.name}}</h2>
+<h3>{{driver.fromCountry}}</h3>
+<h3>{{driver.content}}</h3>
+{% endfor %}
+{% endblock %}
