@@ -14,10 +14,10 @@
 {% block mainmenu %}
 		<div class="header">
 			<ul id="mainmenu" class="mainmenu">
-			<li class="logo"><a href="#"><div class="logo"></div></a></li>
+			<li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
 {% for el in menu %}
 	{% if not forloop.last %}
-			<li><a href="#">{{el.title}}</a></li>
+			<li><a href="{% url el.url_name %}">{{el.title}}</a></li>
 	{% else %}
 			<li class="last"><a href="#">{{el.title}}</a></li>
 	{% endif %}
@@ -33,10 +33,19 @@
 <!-- Sidebar слева -->
 	<td valign="top" class="left-chapters">
 	<ul id="leftchapters">
-		<li class="selected">All teams</li>
-		<li><a href="#">Mercedes-AMG Petronas Formula One Team</a></li>
-		<li><a href="#">Oracle Red Bull Racing</a></li>
-		<li><a href="#">McLaren F1 Team</a></li>
+		{% if team_selected == 0 %}
+			<li class="selected">All teams</li>
+		{% else %}
+			<li ><a href="{% url 'home' %}">All teams</a></li>
+		{% endif %}
+
+		{% for team in teams %}
+			{% if team.pk == team_selected %}
+				<li class="selected">{{team.name}}</li>
+			{% else %}
+				<li><a href="{{team.get_absolute_url}}">{{team.name}}</a></li>
+			{% endif %}
+		{% endfor %}
 	</ul>
 </td>
 <!-- Конец Sidebar'а -->

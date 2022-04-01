@@ -2,13 +2,13 @@
 
 {% block content %}
 <ul class="list-articles">
-	{% for driver in drivers %}
-			<li><h2>{{driver.name}}</h2>
+	{% for p in posts %}
+			<li><h2>{{p.title}}</h2>
 	{% autoescape on %}
 	{{p.content|linebreaks|truncatewords:50}}
 	{% endautoescape %}
 			<div class="clear"></div>
-			<p class="link-read-post"><a href="{{driver.get_absolute_url}}">Читать пост</a></p>
+			<p class="link-read-post"><a href="#">Читать пост</a></p>
 			</li>
 	{% endfor %}
 </ul>
