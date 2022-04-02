@@ -3,6 +3,9 @@
 {% block content %}
 <ul class="list-articles">
 	{% for driver in drivers %}
+		{% if driver.photo %}
+			<p><img class="img-article-left thumb" src = "{{driver.photo.url}}"></p>
+		{% endif %}
 			<li><h2>{{driver.name}}</h2>
 	{% autoescape on %}
 	{{p.content|linebreaks|truncatewords:50}}

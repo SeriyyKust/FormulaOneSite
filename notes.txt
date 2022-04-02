@@ -1,0 +1,3 @@
+login: root
+e-mail: root#mail.ru
+pass: roottoor
