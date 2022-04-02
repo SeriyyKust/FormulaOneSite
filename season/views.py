@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 from .models import *
 
@@ -11,10 +11,8 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
 
 def base_page(request):
     drivers = Drivers.objects.all()
-    teams = Teams.objects.all()
     context = {
         'drivers': drivers,
-        'teams': teams,
         'menu': menu,
         'title': 'Main Page',
         'team_selected': 0
@@ -22,19 +20,28 @@ def base_page(request):
     return render(request, 'season/base_page.html', context=context)
 
 
-def show_post(request, t_id):
-    drivers = Drivers.objects.filter(id=t_id)
-    teams = Teams.objects.all()
+def show_post(request, driver_slug):
+    drivers = get_object_or_404(Drivers, slug=driver_slug)
+    context = {
+        'drivers': drivers,
+        'menu': menu,
+        'title': drivers.name,
+        'team_selected': drivers.teams_id,
+    }
+    print(context)
+    return render(request, 'season/driver.html', context=context)
 
-    if len(drivers) == 0:
-        raise Http404()
+
+def show_team(request, tm_slug):
+    team = Teams.objects.get(slug=tm_slug)
+    drivers = Drivers.objects.filter(teams_id=team.pk)
+
 
     context = {
         'drivers': drivers,
-        'teams': teams,
         'menu': menu,
-        'title': 'Driver',
-        'team_selected': t_id
+        'title': team.name,
+        'team_selected': team.pk
     }
     return render(request, 'season/base_page.html', context=context)
 

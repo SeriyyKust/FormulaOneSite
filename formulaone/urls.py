@@ -17,12 +17,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from formulaone import settings
 from season.views import *
+from formulaone import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('season/', include('season.urls')),
+    path('', include('season.urls')),
 ]
 
 

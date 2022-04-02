@@ -1,0 +1,11 @@
+{% extends 'season/base.html' %}
+
+{% block content %}
+<h1>{{drivers.name}}</h1>
+
+{% if drivers.photo %}
+<p><img class="img-article-left" src="{{drivers.photo.url}}"></p>
+{% endif %}
+
+{{drivers.content|linebreaks}}
+{% endblock %}

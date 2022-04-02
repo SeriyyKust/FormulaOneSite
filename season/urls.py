@@ -7,5 +7,6 @@ urlpatterns = [
     path('addpage/', addpage, name='add_page'),
     path('contact/', contact, name='contact'),
     path('login/', login, name='login'),
-    path('post/<int:t_id>/', show_post, name='post'),
+    path('driver/<slug:driver_slug>/', show_post, name='driver'),
+    path('team/<slug:tm_slug>/', show_team, name='team'),
 ]
