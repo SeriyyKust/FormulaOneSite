@@ -40,7 +40,15 @@
 			<li ><a href="{% url 'home' %}">All teams</a></li>
 		{% endif %}
 
-		{% show_teams 'name' team_selected %}
+		{% for team in teams %}
+		{% if team.drivers__count > 0 %}
+			{% if team.pk == team_selected %}
+				<li class="selected">{{team.name}}</li>
+			{% else %}
+				<li><a href="{{team.get_absolute_url }}">{{team.name}}</a></li>
+			{% endif %}
+		{% endif %}
+		{% endfor %}
 	</ul>
 </td>
 <!-- Конец Sidebar'а -->

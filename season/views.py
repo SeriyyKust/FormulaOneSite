@@ -1,15 +1,13 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
+from .utils import *
 
-menu = [{'title': "О сайте", 'url_name': 'about'},
-        {'title': "Добавить статью", 'url_name': 'add_page'},
-        {'title': "Обратная связь", 'url_name': 'contact'},
-        {'title': "Войти", 'url_name': 'login'}
-]
+
 
 
 #def base_page(request):
@@ -23,7 +21,7 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
 #    return render(request, 'season/base_page.html', context=context)
 
 
-class DriverHome(ListView):
+class DriverHome(DataMixin, ListView):
     model = Drivers
     template_name = 'season/base_page.html'
     context_object_name = 'drivers'
@@ -33,9 +31,8 @@ class DriverHome(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         # Получаем контекст который у нас уже существует (drivers)
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Главная страница'
-        context['team_selected'] = 0
+        c_def = self.get_user_context(title="Главная страница")
+        context = dict(list(context.items()) + list(c_def.items()))
         return context
 
     # Возвращает то, что должна быть прочитано из Drivers
@@ -53,10 +50,8 @@ class ShowPost(DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         # Получаем контекст который у нас уже существует (drivers)
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = context['drivers']
-        context['team_selected'] = context['drivers'].teams_id
-        return context
+        c_def = self.get_user_context(title=context['drivers'])
+        return dict(list(context.items()) + list(c_def.items()))
 
 #def show_post(request, driver_slug):
 #    drivers = get_object_or_404(Drivers, slug=driver_slug)
@@ -73,8 +68,6 @@ class ShowPost(DetailView):
 #def show_team(request, tm_slug):
 #    team = Teams.objects.get(slug=tm_slug)
 #    drivers = Drivers.objects.filter(teams_id=team.pk)
-
-
 #    context = {
 #        'drivers': drivers,
 #        'menu': menu,
@@ -84,7 +77,7 @@ class ShowPost(DetailView):
 #    return render(request, 'season/base_page.html', context=context)
 
 
-class DriversTeams(ListView):
+class DriversTeams(DataMixin, ListView):
     model = Drivers
     template_name = 'season/base_page.html'
     context_object_name = 'drivers'
@@ -95,27 +88,28 @@ class DriversTeams(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Команда - ' + str(context['drivers'][0].teams)
-        context['menu'] = menu
-        context['team_selected'] = context['drivers'][0].teams_id
-        return context
+        c_def = self.get_user_context(title='Команда - ' + str(context['drivers'][0].teams),
+                                      team_selected=context['drivers'][0].teams_id)
+        return dict(list(context.items()) + list(c_def.items()))
 
 
 def about(request):
     return HttpResponse("About")
 
 
-class AddPage(CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'season/addpage.html'
     # Если в модели нет get_url
     success_url = reverse_lazy('home') # указываем адрес маршрута, куда нужно перенаправится, когда добавляем статью
+    #login_url = '/admin/'  # указывает адрес для неавторизованных (так делать в джанго некрасиво - открыто писать url)
+    login_url = reverse_lazy('home')
+    raise_exception = True # Генерирует страницу 403 "Доступ запрещён"
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Добавление гонщика'
-        context['menu'] = menu
-        return context
+        c_def = self.get_user_context(title="Добавить гонщика")
+        return dict(list(context.items()) + list(c_def.items()))
 
 #def addpage(request):
 #    if request.method == 'POST':
